@@ -82,13 +82,58 @@ cd /var/www/vidyut-hrms/backend
 npm install
 ```
 
-Create a `.env` file in the `backend` directory with your environment variables (e.g., `MONGO_URI`, `JWT_SECRET`, `PORT`).
+Create a `.env` file in the `backend` directory with your environment variables. Here's how to set them up:
 
 ```bash
 cp .env.example .env # If you have an example file
-# Edit .env with your actual values
 nano .env
 ```
+
+Inside the `.env` file, add the following:
+
+```
+MONGO_URI=mongodb://localhost:27017/vidyut_hrms # Or your MongoDB connection string
+JWT_SECRET=YOUR_VERY_STRONG_RANDOM_SECRET_KEY
+PORT=5000 # Or any other port you prefer for the backend
+```
+
+**Generating MONGO_URI:**
+If you need to create a dedicated user and database for MongoDB, follow these steps after installing MongoDB:
+
+1.  Connect to MongoDB shell:
+    ```bash
+    mongosh
+    ```
+2.  Switch to the admin database and create a user for the `vidyut_hrms` database:
+    ```javascript
+    use admin
+    db.createUser(
+      {
+        user: "vidyutUser",
+        pwd: "your_secure_password",
+        roles: [ { role: "readWrite", db: "vidyut_hrms" } ]
+      }
+    )
+    ```
+    Replace `vidyutUser` and `your_secure_password` with your desired credentials.
+3.  Exit the MongoDB shell:
+    ```javascript
+    exit
+    ```
+4.  Your `MONGO_URI` would then be: `mongodb://vidyutUser:your_secure_password@localhost:27017/vidyut_hrms?authSource=admin`
+    Remember to replace `your_secure_password` with the actual password you set.
+
+**Generating JWT_SECRET:**
+You can generate a strong random string for `JWT_SECRET` using Node.js or a similar tool.
+On your server, run:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+Copy the output and paste it as the value for `JWT_SECRET` in your `.env` file.
+
+**PORT:**
+The `PORT` variable specifies the port on which your backend application will listen. `5000` is a common choice, but you can change it if needed. Ensure this port is open in your firewall if you are accessing the backend directly.
 
 ## 7. Configure Frontend
 
